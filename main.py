@@ -75,7 +75,7 @@ def create_lstm_sequences(input_csv, max_moves=50):
     X_list = []
     y_list = []
     elo_list = []
-    
+
     # Group by game and player to treat every player as a unique sequence
     grouped = df.groupby(['game_id', 'player_elo'])
     
@@ -94,11 +94,8 @@ def create_lstm_sequences(input_csv, max_moves=50):
         
     # Post padding to ensure every game is exactly 50 moves long
     X = pad_sequences(X_list, maxlen=max_moves, dtype='float32', padding='post', truncating='post')
-    y = np.array(y_list)
-    elos = np.array(elo_list)
     
-    return X, y, elos
-
+    return X, np.array(y_list), np.array(elo_list)
 
 
 if __name__ == "__main__":
@@ -158,3 +155,6 @@ if __name__ == "__main__":
     plt.legend()
     
     plt.show()
+
+    lstm_model.save('chess_cheating_detector.keras')
+    
