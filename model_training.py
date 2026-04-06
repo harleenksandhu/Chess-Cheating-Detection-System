@@ -10,6 +10,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+'''
+Trains the baseline model (Random Forest Classifier)
+'''
 def train_baseline_model(input_csv):
     df = pd.read_csv(input_csv) # load the processed dataset 
 
@@ -47,6 +50,9 @@ def train_baseline_model(input_csv):
     plt.title('Feature Importance')
     plt.show()
 
+'''
+Creates the LSTM model
+'''
 def build_lstm_model(input_shape):
     model = Sequential([
         # Layer 1: Masking layer to tell model to ignore '0' padding that ensures games are same length
@@ -65,6 +71,9 @@ def build_lstm_model(input_shape):
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics = ['accuracy'])
     return model
 
+'''
+Takes move data from input csv and generates 3D temporal tensors for LSTM training
+'''
 def create_lstm_sequences(input_csv, max_moves=50):
     df = pd.read_csv(input_csv)
     

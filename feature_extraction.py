@@ -31,4 +31,5 @@ def extract_game_features(input_csv, output_csv):
     final_dataset = pd.concat([white_features, black_features], ignore_index=True)
     final_dataset = final_dataset.sort_values(by=['game_id', 'side'], ascending=[True, False])
     final_dataset.to_csv(output_csv, index = False)
+    
 

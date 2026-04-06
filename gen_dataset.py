@@ -9,18 +9,14 @@ import io
 import multiprocessing as mp
 import pandas as pd
 import glob
+
 # Global defines
 TOTAL_GAMES = 50000
 CORES = 8
 SF_PATH = r"bin\stockfish\stockfish-windows-x86-64-avx2.exe"
 
-game_phases = ["opening", "midgame", "endgame"]
-
-# sf = Stockfish(path=r"bin\stockfish\stockfish-windows-x86-64-avx2.exe", parameters={"Threads": 1, "Hash": 2048})
-# sf.set_depth(12) 
-
 '''
-Translates SAN to UCI list for stockfish to process
+Translates SAN format to UCI list for stockfish to process
 '''
 def get_uci_moves(move_text):
     try:
@@ -147,8 +143,11 @@ def inject_stockfish_moves(human_moves, sf, white_elo, black_elo, intensity = 0.
 
     return move_log
 
+'''
+Generates the dataset by injecting stockfish engine moves
+'''
 def generate_dataset(num_games = 1000, worker_id = 0, start_index = 0):
-    # initializing stockfish engine
+    # Initializing stockfish engine
     try:
         local_sf = Stockfish(path = SF_PATH, parameters={"Threads": 1, "Hash": 256})
         local_sf.set_depth(10)
@@ -212,10 +211,16 @@ def generate_dataset(num_games = 1000, worker_id = 0, start_index = 0):
                 continue
     return output_file
 
+'''
+Calls generate_dataset for a single worker task
+'''
 def worker_task(worker_id, games_per_worker):
     start_index = worker_id * games_per_worker
     generate_dataset(num_games = games_per_worker, worker_id=worker_id, start_index=start_index)
 
+'''
+Merges all temp files into one
+'''
 def merge_worker_files():
     # Grab all files starting with 'temp_worker_'
     all_files = glob.glob("temp_worker_*.csv")

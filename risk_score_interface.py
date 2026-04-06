@@ -1,17 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# CLANKA CODE !!!!!!!!!!!!!!!!!
-
 def plot_game_risk_profile(model, game_sequence, elo, side):
-    """
-    Takes a single game sequence [30, 2] and plots the risk move-by-move.
-    """
+    ''''
+    Takes a single game sequence and plots the risk move-by-move.
+    '''
     risks = []
     
-    # Calculate risk at each move (from move 1 to 30)
+    # Calculate risk at each move 
     for i in range(1, len(game_sequence) + 1):
-        # Create a partial sequence (pad the rest with zeros)
+        # Creating a partial sequence (padding the rest with zeros)
         current_seq = np.zeros_like(game_sequence)
         current_seq[:i] = game_sequence[:i]
         
@@ -19,13 +17,11 @@ def plot_game_risk_profile(model, game_sequence, elo, side):
         prob = model.predict(current_seq.reshape(1, len(game_sequence), 2), verbose=0)[0][0]
         risks.append(prob)
     
+    # Plotting the Risk Profile
     plt.figure(figsize=(12, 5))
-    plt.plot(range(1, len(game_sequence) + 1), risks, marker='o', linestyle='-', color='red', linewidth=2)
-    plt.axhline(y=0.5, color='black', linestyle='--', label='Suspicion Threshold')
-    
-    plt.fill_between(range(1, len(game_sequence) + 1), risks, 0.5, where=(np.array(risks) >= 0.5), 
-                     color='red', alpha=0.3, label='Cheat Zone')
-    
+    plt.plot(range(1, len(game_sequence) + 1), risks, marker='o', linestyle='-', linewidth=2, color='red') # Risk plot
+    plt.axhline(y=0.5, color='black', linestyle='--', label='Suspicion Threshold') # Suspcion Threshold line
+    plt.fill_between(range(1, len(game_sequence) + 1), risks, 0.5, where=(np.array(risks) >= 0.5), label='Cheat Zone', color='red', alpha=0.3) # Highlights area under line and above threshold
     plt.title(f"Cheating Risk Profile: {side} Player ({elo} Elo)")
     plt.xlabel("Move Number")
     plt.ylabel("Risk Score (Probability)")
@@ -33,6 +29,3 @@ def plot_game_risk_profile(model, game_sequence, elo, side):
     plt.legend()
     plt.grid(alpha=0.3)
     plt.show()
-
-# Usage: Pick a known cheater game from your test set
-# plot_game_risk_profile(model, X_test[10], "G_742")
